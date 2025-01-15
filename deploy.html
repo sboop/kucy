@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Упрощаем деплои</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f0f0;
+        margin: 0;
+    }
+
+.container {
+    text-align: center;
+    background: url('6ae7cb4fe78c045c297cc49909bfba74.jpg') no-repeat center center;
+    background-size: cover; /* Чтобы изображение занимало всю область */
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.2);
+    width: 70%;
+    max-width: 800px;
+}
+
+
+    .wallet-info {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #333;
+    }
+
+    .wallet-address {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .network-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+    .network-button {
+  display: inline-block;
+  width: 100%;
+  max-width: 250px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+  text-align: center;
+}
+
+   .network-button.active,
+.network-button:hover {
+  background-color: #28a745;
+  color: white;
+  border-color: #218838;
+}
+
+    .network-button.inactive {
+  background-color: #f0f0f0;
+  color: #333;
+  border-color: #ddd;
+}
+
+    .network-status {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #333;
+    }
+
+    .status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-left: 10px;
+}
+
+    .status-dot.active {
+        background-color: #28a745;
+    }
+
+    .status-dot.inactive {
+        background-color: #ccc;
+    }
+
+    .button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 10px;
+        width: 100%;
+        max-width: 250px; /* Adjusted for compactness */
+        font-size: 16px;
+    }
+
+    .button:hover {
+        background-color: #0056b3;
+    }
+
+    .input-field {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .input-field input {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        width: 100%;
+        max-width: 400px; /* Adjusted for compactness */
+    }
+
+    .input-field button {
+        margin-top: 10px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        width: 100%;
+        max-width: 250px; /* Adjusted for compactness */
+    }
+
+    .input-field button:hover {
+        background-color: #218838;
+    }
+
+    .transaction-status {
+        margin-top: 20px;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: center;
+        color: #333;
+        font-family: Arial, sans-serif;
+        transition: opacity 0.8s ease;
+        opacity: 1;
+    }
+
+    .transaction-status.hidden {
+        opacity: 0;
+    }
+</style>
+</head>
+<body>
+<body class="flex items-center justify-center h-screen bg-gray-100">
+    <div class="container">
+
+    <span id="contractStatus">Статус контракта не определён</span>
+
+
+        <h1>Упрощаем деплои</h1>
+        <div class="mt-6">
+            <a href="index.html" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105">Перейти на главную страницу</a>
+        </div>
+        <div class="wallet-info" id="wallet-info">Wallet not connected</div>
+        <div>
+         <button id="connect-button" class="bg-green-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105">Connect Wallet</button>
+        <button id="disconnect-button" class="bg-red-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105" style="display: none;">Disconnect Wallet</button>
+    </div>
+        <div class="network-status" id="network-status">Выбрана сеть: Ничего не выбрано</div>
+
+        <div class="network-buttons">
+            
+
+            <div id="gm-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
+                GM Network Mainnet <div class="status-dot inactive"></div>
+            </div>
+            <div id="chainbase-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
+                Chainbase Network <div class="status-dot inactive"></div>
+            </div>
+            <div id="sepolia-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
+                Ethereum Sepolia <div class="status-dot inactive"></div>
+            </div>
+            <div id="curtis-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
+                Curtis Network <div class="status-dot inactive"></div>
+            </div>
+            <div id="superposition-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
+                Superposition Testnet <div class="status-dot inactive"></div>
+            </div>
+            <div id="b3-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
+                B3 Network <div class="status-dot inactive"></div>
+            </div>
+            
+            <div id="story-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
+    Story Network <div class="status-dot inactive"></div>
+</div>
+
+<div id="berachain-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
+    Berachain <div class="status-dot inactive"></div>
+ </div>
+    <div id="plume-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
+        Plume Network <div class="status-dot inactive"></div>
+        </div>
+        <div id="sony-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
+        Sony Network <div class="status-dot inactive"></div>
+</div>
+<div id="dbk-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
+        DBK Chain <div class="status-dot inactive"></div>
+</div>
+<div id="sonic-button" class="network-button bg-red-200 text-red-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-300 w-full sm:w-64">
+        SONIC <div class="status-dot inactive"></div>
+</div>
+
+
+<div id="hemi-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
+        Hemi Testnet <div class="status-dot inactive"></div>
+</div>
+<div id="unichain-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
+        Unichain Testnet <div class="status-dot inactive"></div>
+</div>
+<div id="reddio-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
+        Reddio Testnet <div class="status-dot inactive"></div>
+</div>
+<div id="ink-network-button" class="network-button bg-red-200 text-red-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-300 w-full sm:w-64">
+        Ink <div class="status-dot inactive"></div>
+</div>
+<div id="rari-network-button" class="network-button bg-red-200 text-red-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-300 w-full sm:w-64">
+        Rari <div class="status-dot inactive"></div>
+</div>
+        </div>
+     <div class="input-field">
+    <input type="text" id="contract-bytecode" placeholder="Введи байт-код контракта">
+    <input type="text" id="contract-abi" placeholder="Введи ABI контракта (опционально)">
+    <button id="deploy-contract" class="bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105">Deploy Contract</button>
+    <div class="transaction-status hidden" id="contract-status"></div>
+</div>
+
+
+       
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.1/dist/ethers.umd.min.js"></script>
+    <script>
+        const connectButton = document.getElementById('connect-button');
+        const disconnectButton = document.getElementById('disconnect-button');
+       
+        const gmNetworkButton = document.getElementById('gm-network-button');
+        const chainbaseNetworkButton = document.getElementById('chainbase-network-button');
+        const sepoliaNetworkButton = document.getElementById('sepolia-network-button');
+        const curtisNetworkButton = document.getElementById('curtis-network-button');
+        const superpositionNetworkButton = document.getElementById('superposition-network-button');
+        const b3NetworkButton = document.getElementById('b3-network-button');
+       const sonicNetworkButton = document.getElementById('sonic-button');
+        const storyNetworkButton = document.getElementById('story-network-button');
+        const berachainNetworkButton = document.getElementById('berachain-network-button');
+        const plumeNetworkButton = document.getElementById('plume-network-button');
+        const sonyNetworkButton = document.getElementById('sony-network-button');
+        const dbkNetworkButton = document.getElementById('dbk-network-button');
+          const hemiNetworkButton = document.getElementById('hemi-network-button');
+          const unichainNetworkButton = document.getElementById('unichain-network-button');
+          const reddioNetworkButton = document.getElementById('reddio-network-button');
+          const inkNetworkButton = document.getElementById('ink-network-button');
+          const rariNetworkButton = document.getElementById('rari-network-button');
+        const deployContractButton = document.getElementById('deploy-contract');
+deployContractButton.addEventListener('click', deployContract);
+
+        const walletInfo = document.getElementById('wallet-info');
+        const networkStatus = document.getElementById('network-status');
+        const transactionAddressInput = document.getElementById('transaction-address');
+        const amountInput = document.getElementById('amount');
+        const sendTransactionButton = document.getElementById('send-transaction');
+        const transactionStatus = document.getElementById('transaction-status');
+        let contractStatus; // Объявите переменную здесь
+        let provider;
+        let randomAddresses = [];
+
+        // Token Contract Address and ABI (Only including transfer function for simplicity)
+        const apeTokenAddress = "0x4d224452801aced8b2f0aebe155379bb5d594381"; // Update this to the correct address if necessary
+        const apeTokenABI = [
+            "function transfer(address to, uint256 amount) external returns (bool)"
+        ];
+
+        async function connectWallet() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+                    const walletAddress = accounts[0];
+                    walletInfo.innerHTML = `Connected: <span class="wallet-address">${formatAddress(walletAddress)}</span>`;
+                    connectButton.style.display = 'none';
+                    disconnectButton.style.display = 'inline-block';
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    await updateNetworkButtons(); // Update network status after connecting
+                    await loadRandomAddresses(); // Load random addresses
+                } catch (error) {
+                    console.error('Failed to connect wallet', error);
+                    alert('Failed to connect wallet. Check console for details.');
+                }
+            } else {
+                alert('Rabby Wallet is not installed. Please install it to use this feature.');
+            }
+        }
+
+
+
+        function disconnectWallet() {
+            walletInfo.innerHTML = 'Wallet not connected';
+            networkStatus.innerHTML = 'Выбрана сеть: Not Connected';
+            connectButton.style.display = 'inline-block';
+            disconnectButton.style.display = 'none';
+            resetNetworkButtons(); // Reset network buttons
+            provider = null;
+        }
+
+        function formatAddress(address) {
+            return `${address.slice(0, 6)}...${address.slice(-4)}`;
+        }
+
+       async function isNetworkAdded(chainId) {
+    try {
+        const network = await ethereum.request({ method: 'eth_chainId' });
+        return network === chainId;
+    } catch (error) {
+        console.error('Ошибка при проверке сети', error);
+        return false;
+    }
+}
+
+async function isNetworkAdded(chainId) {
+    try {
+        const network = await ethereum.request({ method: 'eth_chainId' });
+        return network === chainId;
+    } catch (error) {
+        console.error('Ошибка при проверке сети', error);
+        return false;
+    }
+}
+
+      function isNetworkPreviouslyChecked(chainId) {
+    return localStorage.getItem(`network-${chainId}`) === 'added';
+}
+
+
+// Функция для проверки доступности RPC URL
+async function checkRpcUrls(urls) {
+    for (const url of urls) {
+        try {
+            const provider = new ethers.providers.JsonRpcProvider(url);
+            await provider.getBlockNumber();  // Пытаемся получить номер текущего блока
+            console.log(`RPC URL доступен: ${url}`);
+            return url;
+        } catch (error) {
+            console.warn(`RPC URL не доступен: ${url}`, error);
+        }
+    }
+    throw new Error('Нет доступных RPC URL');
+}
+
+// Функция для добавления сети
+async function connectNetworkWithCheck(networkConfig) {
+    try {
+        // Проверяем, добавлена ли уже сеть
+        const networkAlreadyAdded = await isNetworkAdded(networkConfig.chainId);
+
+        if (!networkAlreadyAdded) {
+            // Если сеть не добавлена, проверяем доступность RPC URL
+            const rpcUrl = await checkRpcUrls(networkConfig.rpcUrls);
+            const updatedConfig = { ...networkConfig, rpcUrls: [rpcUrl] };
+
+            // Добавляем сеть в кошелек
+            await ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [updatedConfig]
+            });
+
+            // Сохраняем информацию о проверенной сети в localStorage
+            localStorage.setItem(`network-${networkConfig.chainId}`, 'added');
+        }
+
+        // Создаем провайдер
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        await updateNetworkButtons();
+    } catch (error) {
+        console.error('Не удалось подключиться к сети', error);
+        alert('Не удалось подключиться к сети. Проверьте консоль для деталей.');
+    }
+}
+
+
+
+
+
+        async function addNetwork(networkConfig) {
+            try {
+                await ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [networkConfig]
+                });
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                await updateNetworkButtons();
+            } catch (error) {
+                console.error('Failed to add or switch network', error);
+                alert('Failed to add or switch network. Check console for details.');
+            }
+        }
+
+        async function updateNetworkButtons() {
+            if (!provider) return;
+
+            try {
+                const currentChainId = await ethereum.request({ method: 'eth_chainId' });
+                console.log('Current chainId:', currentChainId); // For debugging
+                resetNetworkButtons(); // Reset buttons before updating
+
+                switch (currentChainId) {
+                    
+                    case '0xad9':
+                        networkStatus.innerHTML = 'Выбрана сеть: GM Network Mainnet';
+                        setActiveNetwork(gmNetworkButton);
+                        break;
+                    case '0x8b9':
+                        networkStatus.innerHTML = 'Выбрана сеть: Chainbase Network';
+                        setActiveNetwork(chainbaseNetworkButton);
+                        break;
+                    case '0xaa36a7':
+                        networkStatus.innerHTML = 'Выбрана сеть: Ethereum Sepolia';
+                        setActiveNetwork(sepoliaNetworkButton);
+                        break;
+                    case '0x8157':
+                        networkStatus.innerHTML = 'Выбрана сеть: Curtis Network';
+                        setActiveNetwork(curtisNetworkButton);
+                        break;
+                    case '0xd7cc':
+                        networkStatus.innerHTML = 'Выбрана сеть: Superposition Testnet';
+                        setActiveNetwork(superpositionNetworkButton);
+                        break;
+                    case '0x208d':
+                        networkStatus.innerHTML = 'Выбрана сеть: B3 Network';
+                        setActiveNetwork(b3NetworkButton);
+                        break;
+                    
+                    case '0x5ec':
+                        networkStatus.innerHTML = 'Выбрана сеть: Story Network';
+                        setActiveNetwork(storyNetworkButton);
+                        break;
+
+                    case '0x92':
+                        networkStatus.innerHTML = 'Выбрана сеть: SONIC';
+                        setActiveNetwork(sonicNetworkButton);
+                        break;  
+
+                    case '0x138d4':
+                        networkStatus.innerHTML = 'Выбрана сеть: Berachain';
+                        setActiveNetwork(berachainNetworkButton);
+                        break; 
+                        case '0x99c0a0f':
+                        networkStatus.innerHTML = 'Выбрана сеть: Plume Network';
+                        setActiveNetwork(plumeNetworkButton);
+                        break; 
+                         case '0x74c':
+                        networkStatus.innerHTML = 'Выбрана сеть: Sony Network';
+                        setActiveNetwork(sonyNetworkButton);
+                        break; 
+                         case '0x134d8db':
+                        networkStatus.innerHTML = 'Выбрана сеть: Dbk Chain';
+                        setActiveNetwork(dbkNetworkButton);
+                        break;
+                         case '0xb56c7':
+                        networkStatus.innerHTML = 'Выбрана сеть: Hemi Network';
+                        setActiveNetwork(hemiNetworkButton);
+                        break;   
+                          case '0x515':
+                        networkStatus.innerHTML = 'Выбрана сеть: Unichain Sepolia';
+                        setActiveNetwork(unichainNetworkButton);
+                        break;   
+                        case '0xc4a5':
+                        networkStatus.innerHTML = 'Выбрана сеть: Reddio';
+                        setActiveNetwork(reddioNetworkButton);
+                        break;  
+                         case '0xdef1':
+                        networkStatus.innerHTML = 'Выбрана сеть: Ink';
+                        setActiveNetwork(inkNetworkButton);
+                        break;  
+                        case '0x52415249':
+                        networkStatus.innerHTML = 'Выбрана сеть: Rari';
+                        setActiveNetwork(rariNetworkButton);
+                        break; 
+                    default:
+                        networkStatus.innerHTML = 'Выбрана сеть: Unknown';
+                        break;
+                }
+            } catch (error) {
+                console.error('Failed to update network buttons', error);
+                alert('Failed to update network buttons. Check console for details.');
+            }
+        }
+
+        function resetNetworkButtons() {
+            const networkButtons = document.querySelectorAll('.network-button');
+            networkButtons.forEach(button => {
+                button.classList.remove('active');
+                button.classList.add('inactive');
+            });
+        }
+
+        function setActiveNetwork(button) {
+            console.log('Setting active network for button:', button.id); // Log button id
+            button.classList.remove('inactive');
+            button.classList.add('active');
+            button.querySelector('.status-dot').classList.remove('inactive');
+            button.querySelector('.status-dot').classList.add('active');
+        }
+
+        async function loadRandomAddresses() {
+            // Generate 5 random addresses for demonstration purposes
+            randomAddresses = Array.from({ length: 5 }, () => ethers.Wallet.createRandom().address);
+        }
+
+        async function deployContract() {
+    console.log("Deploy contract function called"); // Debugging line
+    const contractStatus = document.getElementById('contract-status');
+    if (!contractStatus) {
+        console.error('Element with id "contract-status" not found');
+        return;
+    }
+
+    contractStatus.innerHTML = ''; // Clear previous message
+    contractStatus.classList.remove('hidden'); // Show message
+
+    if (!provider) {
+        contractStatus.innerHTML = '<span style="color: red;">Пожалуйста, подключите ваш кошелек.</span>';
+        return;
+    }
+
+    const bytecode = document.getElementById('contract-bytecode').value;
+    const abi = document.getElementById('contract-abi').value;
+
+    if (!bytecode) {
+        contractStatus.innerHTML = '<span style="color: red;">Пожалуйста, укажите байт-код контракта.</span>';
+        return;
+    }
+
+    try {
+        const signer = provider.getSigner();
+        const factory = new ethers.ContractFactory(abi, bytecode, signer);
+        const contract = await factory.deploy(); // Deploy contract
+        await contract.deployTransaction.wait(); // Wait for transaction to be mined
+
+        // Display contract address
+        contractStatus.innerHTML = `<span style="color: green;">Контракт успешно деплоен! Адрес: ${contract.address}</span>`;
+        
+        // Update contract status
+        document.getElementById('contractStatus').innerText = 'Статус контракта: активен'; // Add this line
+    } catch (error) {
+        console.error('Не удалось деплоить контракт', error);
+        contractStatus.innerHTML = '<span style="color: red;">Не удалось деплоить контракт. Проверьте консоль для деталей.</span>';
+        
+        // Update contract status
+        document.getElementById('contractStatus').innerText = 'Статус контракта: ошибка'; // Optionally update status on error
+    }
+}
+
+
+
+
+
+        function getRandomAddress() {
+            // Return a random address from the pre-generated list
+            return randomAddresses[Math.floor(Math.random() * randomAddresses.length)];
+        }
+
+        function generateRandomAmount() {
+            // Generate a random amount between 0.000000007 and 0.000007
+            const min = 0.000000007;
+            const max = 0.000007;
+            return ethers.utils.parseUnits((Math.random() * (max - min) + min).toFixed(8), 'ether');
+        }
+
+        connectButton.addEventListener('click', connectWallet);
+        disconnectButton.addEventListener('click', disconnectWallet);
+
+
+
+        
+        gmNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0xad9',
+            chainName: 'GM Network Mainnet',
+            nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18
+            },
+            rpcUrls: ['https://rpc.gmnetwork.ai'],
+            blockExplorerUrls: ['https://explorer.gm.network']
+        }));
+        chainbaseNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0x8b9',
+            chainName: 'Chainbase Network',
+            nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18
+            },
+            rpcUrls: [
+                'https://rpc.chainbase.network',
+                'https://testnet.s.chainbase.com'
+                ],
+            blockExplorerUrls: ['https://explorer.chainbase.network']
+        }));
+        sepoliaNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0xaa36a7',
+            chainName: 'Ethereum Sepolia',
+            nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18
+            },
+            rpcUrls: ['https://rpc.sepolia.network',
+                'https://rpc.sepolia.network',
+'https://sepolia.gateway.tenderly.co',
+'wss://sepolia.drpc.org',
+'https://ethereum-sepolia-rpc.publicnode.com',
+'https://endpoints.omniatech.io/v1/eth/sepolia/public',
+'https://ethereum-sepolia.rpc.subquery.network/public'
+
+                ],
+            blockExplorerUrls: ['https://explorer.sepolia.network']
+        }));
+        curtisNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0x8157',
+            chainName: 'Curtis Network',
+            nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18
+            },
+            rpcUrls: [
+                'https://rpc.curtis.network',
+                  'https://rpc.curtis.apechain.com'
+                ],
+            blockExplorerUrls: ['https://explorer.curtis.network']
+        }));
+        superpositionNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0xd7cc',
+            chainName: 'Superposition Testnet',
+            nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'SPN',
+                decimals: 18
+            },
+            rpcUrls: ['https://rpc.superposition.so'],
+            blockExplorerUrls: ['https://testnet-explorer.superposition.so']
+        }));
+        b3NetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0x208d',
+            chainName: 'B3 Network',
+            nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18
+            },
+            rpcUrls: ['https://mainnet-rpc.b3.fun'],
+            blockExplorerUrls: ['https://explorer.b3.network']
+        }));
+
+        sonicNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0x92',
+            chainName: 'Sonic Mainnet',
+            nativeCurrency: {
+                name: 'Sonic',
+                symbol: 'S',
+                decimals: 18
+            },
+            rpcUrls: [
+                'wss://sonic.callstaticrpc.com',
+                'wss://sonic.drpc.org',
+                'https://rpc.ankr.com/sonic_mainnet',
+                'https://rpc.soniclabs.com'
+
+                 ],
+            blockExplorerUrls: ['https://explorer.soniclabs.com/']
+        }));
+
+        
+
+
+         storyNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0x5ec',
+            chainName: 'Story Network',
+            nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'IP',
+                decimals: 18
+            },
+            rpcUrls: ['https://rpc-storyevm-testnet.aldebaranode.xyz',
+                'https://evm-rpc-story.josephtran.xyz',
+                'https://story-testnet-evm.itrocket.net',
+                'https://evm-rpc-story.josephtran.xyz',
+                'https://lightnode-json-rpc-story.grandvalleys.com',
+                'https://odyssey.storyrpc.io'],
+            blockExplorerUrls: ['https://testnet.storyscan.xyz']
+        }));
+         berachainNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0x138d4',
+            chainName: 'Berachain',
+            nativeCurrency: {
+                name: 'Berachain bArtio',
+                symbol: 'BERA',
+                decimals: 18
+            },
+            rpcUrls: [
+                'https://bera-testnet.nodeinfra.com',
+                'https://bartio.rpc.berachain.com',
+                'wss://bartio.drpc.org',
+                'https://bartio.drpc.org',
+                'https://bartio.rpc.b-harvest.io'
+
+                ],
+            blockExplorerUrls: ['https://bartio.beratrail.io']
+        }));
+            plumeNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0x99c0a0f',
+            chainName: 'Plume Network',
+            nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18
+            },
+            rpcUrls: [
+                'https://testnet-rpc.plumenetwork.xyz/http'
+                
+
+                ],
+            blockExplorerUrls: ['https://testnet-explorer.plumenetwork.xyz']
+        }));
+         sonyNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0x74c',
+            chainName: 'Sony Network',
+            nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18
+            },
+            rpcUrls: [
+                'https://soneium.rpc.scs.startale.com?apikey=ewFkQxunlvrNjI0Q7kXIrArcrORjHJ7G'
+                 ],
+            blockExplorerUrls: ['https://soneium.blockscout.com']
+        }));
+           dbkNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0x134d8db',
+            chainName: 'Dbk Chain',
+            nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18
+            },
+            rpcUrls: [
+                'https://rpc.mainnet.dbkchain.io'
+                 ],
+            blockExplorerUrls: ['https://scan.dbkchain.io/']
+        }));
+         
+         
+               hemiNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0xb56c7',
+            chainName: 'Hemi Network',
+            nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18
+            },
+            rpcUrls: [
+                'https://testnet.rpc.hemi.network/rpc'
+                 ],
+            blockExplorerUrls: ['https://testnet.explorer.hemi.xyz']
+        }));
+                     unichainNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0x515',
+            chainName: 'Unichain Sepolia',
+            nativeCurrency: {
+                name: 'Ethereum',
+                symbol: 'ETH',
+                decimals: 18
+            },
+            rpcUrls: [
+                'https://sepolia.unichain.org'
+                 ],
+            blockExplorerUrls: ['https://sepolia.uniscan.xyz']
+        }));
+
+                     reddioNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0xc4a5',
+            chainName: 'Reddio Devnet',
+            nativeCurrency: {
+                name: 'Reddio',
+                symbol: 'RED',
+                decimals: 18
+            },
+            rpcUrls: [
+                'https://reddio-dev.reddio.com'
+
+
+                 ],
+            blockExplorerUrls: ['https://reddio-devnet.l2scan.co']
+        }));
+                               inkNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0xdef1',
+            chainName: 'Ink',
+            nativeCurrency: {
+                name: 'Ink',
+                symbol: 'ETH',
+                decimals: 18
+            },
+            rpcUrls: [
+                'wss://rpc-qnd.inkonchain.com',
+                'https://rpc-qnd.inkonchain.com',
+                'https://rpc-gel.inkonchain.com'
+
+                 ],
+            blockExplorerUrls: ['https://explorer.inkonchain.com/']
+        }));
+                                         rariNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
+            chainId: '0x52415249',
+            chainName: 'Rari',
+            nativeCurrency: {
+                name: 'Rari',
+                symbol: 'ETH',
+                decimals: 18
+            },
+            rpcUrls: [
+                'wss://mainnet.rpc.rarichain.org/ws',
+                'https://mainnet.rpc.rarichain.org/http'
+
+                 ],
+            blockExplorerUrls: ['https://mainnet.explorer.rarichain.org/']
+        }));
+        sendTransactionButton.addEventListener('click', sendTransaction);
+
+        window.addEventListener('load', async () => {
+            if (provider) {
+                await updateNetworkButtons();
+            }
+        });
+
+    </script>
+</body>
+</html>

@@ -221,7 +221,7 @@
         Hemi Testnet <div class="status-dot inactive"></div>
 </div>
 <div id="unichain-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
-        Unichain Testnet <div class="status-dot inactive"></div>
+        Unichain<div class="status-dot inactive"></div>
 </div>
 <div id="reddio-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
         Reddio Testnet <div class="status-dot inactive"></div>
@@ -472,8 +472,8 @@ async function connectNetworkWithCheck(networkConfig) {
                         networkStatus.innerHTML = 'Выбрана сеть: Hemi Network';
                         setActiveNetwork(hemiNetworkButton);
                         break;   
-                          case '0x515':
-                        networkStatus.innerHTML = 'Выбрана сеть: Unichain Sepolia';
+                          case '0x82':
+                        networkStatus.innerHTML = 'Выбрана сеть: Unichain';
                         setActiveNetwork(unichainNetworkButton);
                         break;   
                         case '0xc4a5':
@@ -778,17 +778,17 @@ async function connectNetworkWithCheck(networkConfig) {
             blockExplorerUrls: ['https://testnet.explorer.hemi.xyz']
         }));
                      unichainNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
-            chainId: '0x515',
-            chainName: 'Unichain Sepolia',
+            chainId: '0x82',
+            chainName: 'Unichain',
             nativeCurrency: {
                 name: 'Ethereum',
                 symbol: 'ETH',
                 decimals: 18
             },
             rpcUrls: [
-                'https://sepolia.unichain.org'
+                'https://mainnet.unichain.org'
                  ],
-            blockExplorerUrls: ['https://sepolia.uniscan.xyz']
+            blockExplorerUrls: ['https://uniscan.xyz']
         }));
 
                      reddioNetworkButton.addEventListener('click', () => connectNetworkWithCheck({

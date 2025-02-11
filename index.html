@@ -192,27 +192,10 @@
             <div id="superposition-network-button" class="network-button bg-red-200 text-red-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-300 w-full sm:w-64">
                 Superposition Testnet <div class="status-dot inactive"></div>
             </div>
-            <div id="b3-network-button" class="network-button bg-red-200 text-red-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-300 w-full sm:w-64">
-                B3 Network <div class="status-dot inactive"></div>
-            </div>
-            
-            <div id="story-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
-    Story Network <div class="status-dot inactive"></div>
-</div>
-
-<div id="berachain-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
-     Berachain <div class="status-dot inactive"></div></div>
-
-    <div id="plume-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
-        Plume Network <div class="status-dot inactive"></div></div>
         <div id="sony-network-button" class="network-button bg-red-200 text-red-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-300 w-full sm:w-64">
         Sony Network <div class="status-dot inactive"></div>
 </div>
 
-
-<div id="hemi-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
-        Hemi Testnet <div class="status-dot inactive"></div>
-</div>
 <div id="unichain-network-button" class="network-button bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 w-full sm:w-64">
         Unichain<div class="status-dot inactive"></div>
 </div>
@@ -263,13 +246,8 @@
         const sepoliaNetworkButton = document.getElementById('sepolia-network-button');
         const curtisNetworkButton = document.getElementById('curtis-network-button');
         const superpositionNetworkButton = document.getElementById('superposition-network-button');
-        const b3NetworkButton = document.getElementById('b3-network-button');
-        const storyNetworkButton = document.getElementById('story-network-button');
-        const berachainNetworkButton = document.getElementById('berachain-network-button');
-        const plumeNetworkButton = document.getElementById('plume-network-button');
         const sonyNetworkButton = document.getElementById('sony-network-button');
          const sonicNetworkButton = document.getElementById('sonic-button');
-         const hemiNetworkButton = document.getElementById('hemi-network-button');
          const unichainNetworkButton = document.getElementById('unichain-network-button');
          const reddioNetworkButton = document.getElementById('reddio-network-button');
          const inkNetworkButton = document.getElementById('ink-network-button');
@@ -443,23 +421,6 @@ async function connectNetworkWithCheck(networkConfig) {
                         networkStatus.innerHTML = 'Выбрана сеть: Superposition Testnet';
                         setActiveNetwork(superpositionNetworkButton);
                         break;
-                    case '0x208d':
-                        networkStatus.innerHTML = 'Выбрана сеть: B3 Network';
-                        setActiveNetwork(b3NetworkButton);
-                        break;
-                   
-                    case '0x5ec':
-                        networkStatus.innerHTML = 'Выбрана сеть: Story Network';
-                        setActiveNetwork(storyNetworkButton);
-                        break;
-                    case '0x138d4':
-                        networkStatus.innerHTML = 'Выбрана сеть: Berachain';
-                        setActiveNetwork(berachainNetworkButton);
-                        break;   
-                        case '0x99c0a0f':
-                        networkStatus.innerHTML = 'Выбрана сеть: Plume Network';
-                        setActiveNetwork(plumeNetworkButton);
-                        break; 
                          case '0x74c':
                         networkStatus.innerHTML = 'Выбрана сеть: Sony Network';
                         setActiveNetwork(sonyNetworkButton);
@@ -467,11 +428,7 @@ async function connectNetworkWithCheck(networkConfig) {
                         case '0x92':
                         networkStatus.innerHTML = 'Выбрана сеть: SONIC';
                         setActiveNetwork(sonicNetworkButton);
-                        break;  
-                         case '0xb56c7':
-                        networkStatus.innerHTML = 'Выбрана сеть: Hemi Network';
-                        setActiveNetwork(hemiNetworkButton);
-                        break; 
+                        break;                           
                           case '0x82':
                         networkStatus.innerHTML = 'Выбрана сеть: Unichain';
                         setActiveNetwork(unichainNetworkButton);
@@ -692,67 +649,8 @@ function getRandomAddress() {
             rpcUrls: ['https://rpc.superposition.so'],
             blockExplorerUrls: ['https://testnet-explorer.superposition.so']
         }));
-        b3NetworkButton.addEventListener('click', () => connectNetworkWithCheck({
-            chainId: '0x208d',
-            chainName: 'B3 Network',
-            nativeCurrency: {
-                name: 'Ethereum',
-                symbol: 'ETH',
-                decimals: 18
-            },
-            rpcUrls: ['https://mainnet-rpc.b3.fun'],
-            blockExplorerUrls: ['https://explorer.b3.network']
-        }));
-       
-         storyNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
-            chainId: '0x5ec',
-            chainName: 'Story Network',
-            nativeCurrency: {
-                name: 'Ethereum',
-                symbol: 'IP',
-                decimals: 18
-            },
-            rpcUrls: ['https://rpc-storyevm-testnet.aldebaranode.xyz',
-                'https://evm-rpc-story.josephtran.xyz',
-                'https://story-testnet-evm.itrocket.net',
-                'https://evm-rpc-story.josephtran.xyz',
-                'https://lightnode-json-rpc-story.grandvalleys.com',
-                'https://odyssey.storyrpc.io'],
-            blockExplorerUrls: ['https://testnet.storyscan.xyz']
-        }));
-         berachainNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
-            chainId: '0x138d4',
-            chainName: 'Berachain',
-            nativeCurrency: {
-                name: 'Berachain bArtio',
-                symbol: 'BERA',
-                decimals: 18
-            },
-            rpcUrls: [
-                'https://bera-testnet.nodeinfra.com',
-                'https://bartio.rpc.berachain.com',
-                'wss://bartio.drpc.org',
-                'https://bartio.drpc.org',
-                'https://bartio.rpc.b-harvest.io'
-
-                ],
-            blockExplorerUrls: ['https://bartio.beratrail.io']
-        }));
-         plumeNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
-            chainId: '0x99c0a0f',
-            chainName: 'Plume Network',
-            nativeCurrency: {
-                name: 'Ethereum',
-                symbol: 'ETH',
-                decimals: 18
-            },
-            rpcUrls: [
-                'https://testnet-rpc.plumenetwork.xyz/http'
-                
-
-                ],
-            blockExplorerUrls: ['https://testnet-explorer.plumenetwork.xyz']
-        }));
+     
+    
          sonyNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
             chainId: '0x74c',
             chainName: 'Sony Network',
@@ -799,19 +697,7 @@ function getRandomAddress() {
             blockExplorerUrls: ['https://reddio-devnet.l2scan.co']
         }));
         
-             hemiNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
-            chainId: '0xb56c7',
-            chainName: 'Hemi Network',
-            nativeCurrency: {
-                name: 'Ethereum',
-                symbol: 'ETH',
-                decimals: 18
-            },
-            rpcUrls: [
-                'https://testnet.rpc.hemi.network/rpc'
-                 ],
-            blockExplorerUrls: ['https://testnet.explorer.hemi.xyz']
-        }));
+        
                      unichainNetworkButton.addEventListener('click', () => connectNetworkWithCheck({
             chainId: '0x82',
             chainName: 'Unichain',
